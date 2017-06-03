@@ -17,7 +17,6 @@ void backtrack(point a[], int k, mazetype * maze) {
 	else {
 		k++;
 		construct_candidates(a, k, maze, c, &nCandidates);
-		cout << "nCandidates: " << nCandidates << endl;
 		for (int i = 0; i < nCandidates; i++)
 		{
 			a[k] = c[i];
