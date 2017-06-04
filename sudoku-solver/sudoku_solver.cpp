@@ -5,12 +5,12 @@
 #include "sudoku_solver.h"
 using namespace std;
 
-
+// Depth first search backtracking
 void backtrack(int a[], int k, boardtype * board) {
 	int c[MAX_CANDIDATES];
 	int nCandidates;
 
-	if (is_a_solution(a, k, board))
+	if (is_a_solution(a, k, board)) // check whether current board arrangement is a solution
 		process_solution(a, k, board);
 	else {
 		k++;
@@ -19,12 +19,11 @@ void backtrack(int a[], int k, boardtype * board) {
 		for (int i = 0; i < nCandidates; i++)
 		{
 			a[k] = c[i];
-			make_move(a, k, board);
-
-			backtrack(a, k, board);
-			if (finished)
+			make_move(a, k, board); // fill square
+			backtrack(a, k, board); // search depth first
+			if (finished) // early terminate if solution is found
 				return;
-			unmake_move(a, k, board);
+			unmake_move(a, k, board); // free square
 		}
 	}
 }
@@ -44,12 +43,15 @@ void possible_values(int x, int y, boardtype *board, bool * possible) {
 
 	possible[0] = false;
 
+	// mark the values in same row as not possible
 	for (i = 0; i < DIMENSION; i++)
 		possible[board->m[x][i]] = false;
 
+	// mark the values in same column as not possible
 	for (i = 0; i < DIMENSION; i++)
 		possible[board->m[i][y]] = false;
 
+	// mark the values in same quadrant as not possible
 	xlow = BW * ((int)(x / BW));
 	ylow = BW * ((int)(y / BW));
 
@@ -59,6 +61,7 @@ void possible_values(int x, int y, boardtype *board, bool * possible) {
 
 }
 
+// count possible values
 int possible_count(int x, int y, boardtype *board) {
 	int i, cnt = 0;
 	bool possible[DIMENSION + 1];     /* what is possible for the square */
@@ -69,6 +72,7 @@ int possible_count(int x, int y, boardtype *board) {
 	return cnt;
 }
 
+// find next square
 void next_square(int *x, int *y, boardtype* board) {
 	int i, j;
 	int bestcnt, newcnt;		/* the best and latest square counts */
@@ -100,11 +104,13 @@ void next_square(int *x, int *y, boardtype* board) {
 
 }
 
+// check whether is a solution
 bool is_a_solution(int a[], int k, boardtype *board)
 {
 	return board->freecount == 0;
 }
 
+// process the solution
 void process_solution(int a[], int k, boardtype * board)
 {
 	cout << "Solution: " << endl;
@@ -113,6 +119,7 @@ void process_solution(int a[], int k, boardtype * board)
 	finished = true;
 }
 
+// fill the square
 void make_move(int a[], int k, boardtype *board)
 {
 	int x = board->move[k].x;
@@ -127,6 +134,7 @@ void make_move(int a[], int k, boardtype *board)
 	board->m[x][y] = a[k];
 }
 
+// free the square
 void unmake_move(int a[], int k, boardtype *board)
 {
 	int x = board->move[k].x;
@@ -140,6 +148,7 @@ void unmake_move(int a[], int k, boardtype *board)
 	board->m[x][y] = 0;
 }
 
+// generate candidates
 void construct_candidates(int a[], int k, boardtype *board, int c[], int *ncandidates)
 {
 	int x, y; /* position of next move */
@@ -162,6 +171,7 @@ void construct_candidates(int a[], int k, boardtype *board, int c[], int *ncandi
 		}
 }
 
+// print board
 void print_board(boardtype * board)
 {
 	for (int i = 0; i < DIMENSION; i++)
